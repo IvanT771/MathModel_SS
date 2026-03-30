@@ -100,7 +100,7 @@ def libman_fixed_iterations_test_task(
     u_right: float = 40.0
 ):
     """
-    Верификационная тестовая задача из методички:
+    Верификационная тестовая задача:
     решение после заданного числа итераций с адаптированными границами.
     """
     x, y, hx, hy, u = create_test_initial_solution(nx, ny, u_left, u_right)
@@ -144,8 +144,6 @@ def analytical_solution(x: np.ndarray, y: np.ndarray):
 
     Решение:
         U(x, y) = sinh(pi * (1 - x)) / sinh(pi) * sin(pi * y)
-
-    Это удобно для проверки численного результата.
     """
     result = np.zeros((len(y), len(x)), dtype=float)
 
@@ -164,20 +162,16 @@ def libman_fixed_iterations(nx: int, ny: int, iterations: int):
     Решение методом Либмана для заданного числа итераций.
 
     Здесь используется итерационная формула для внутренних узлов.
-    Для случая hx = hy формула сводится к среднему четырех соседей,
-    что показано в методичке.
+    Для случая hx = hy формула сводится к среднему четырех соседей.
 
     Для общего случая:
         u_new(i,j) =
             [ hy^2 * (u(i,j+1) + u(i,j-1)) + hx^2 * (u(i+1,j) + u(i-1,j)) ]
             / [ 2 * (hx^2 + hy^2) ]
 
-    В реализации ниже применяется схема с "новыми" значениями,
-    как это обычно делают в методе Либмана / Гаусса-Зейделя.
     """
     x, y, hx, hy, u = create_initial_solution(nx, ny)
 
-    # Выполняем заданное число итераций
     for _ in range(iterations):
         # Проходим только по внутренним узлам
         for i in range(1, ny):
@@ -197,9 +191,6 @@ def libman_until_eps(nx: int, ny: int, eps: float, max_iterations: int = 100000)
 
     Критерий остановки:
         max |u_new - u_old| < eps
-
-    Именно такой подход к исследованию сходимости и зависимости числа
-    итераций от заданной точности описан в методичке.
     """
     x, y, hx, hy, u = create_initial_solution(nx, ny)
 
@@ -243,7 +234,7 @@ def libman_relaxation_until_eps(
     """
     Ускоренный метод Либмана с коэффициентом релаксации w.
 
-    Формула из идеи релаксации:
+    Формула релаксации:
         u_new = w * u_libman + (1 - w) * u_old
 
     где:
@@ -251,12 +242,6 @@ def libman_relaxation_until_eps(
     - u_old    - старое значение узла,
     - w        - коэффициент релаксации.
 
-    В методичке указано исследование зависимости числа итераций
-    от выбранного коэффициента релаксации.
-
-    Обычно:
-    - w = 1.0  -> обычный метод Либмана
-    - 1 < w < 2 -> ускорение
     """
     x, y, hx, hy, u = create_initial_solution(nx, ny)
 
@@ -291,9 +276,8 @@ def libman_relaxation_until_eps(
     return x, y, u, iteration_count, max_diff
 
 
-# ============================================================
+
 # Верификация на аналитическом решении
-# ============================================================
 
 def compute_error(u_numeric: np.ndarray, u_exact: np.ndarray):
     """
@@ -303,9 +287,7 @@ def compute_error(u_numeric: np.ndarray, u_exact: np.ndarray):
     return np.max(np.abs(u_numeric - u_exact))
 
 
-# ============================================================
 # Исследование зависимости числа итераций от eps
-# ============================================================
 
 def study_eps_dependency(nx: int, ny: int, eps_values):
     """
@@ -321,10 +303,7 @@ def study_eps_dependency(nx: int, ny: int, eps_values):
     return iterations
 
 
-# ============================================================
 # Исследование зависимости числа итераций от w
-# ============================================================
-
 def study_w_dependency(nx: int, ny: int, eps: float, w_values):
     """
     Для фиксированной точности eps исследует,
@@ -339,22 +318,14 @@ def study_w_dependency(nx: int, ny: int, eps: float, w_values):
     return iterations
 
 
-# ============================================================
-# Печать результатов
-# ============================================================
 
+# Печать результатов
 def print_matrix(title: str, matrix: np.ndarray, precision: int = 6):
-    """
-    Красиво печатает матрицу с заголовком.
-    """
     print(f"\n{title}")
     print(np.array2string(matrix, precision=precision, suppress_small=False))
 
 
-# ============================================================
 # Графики
-# ============================================================
-
 def plot_eps_dependency(eps_values, iterations):
     """
     Строит график зависимости числа итераций от точности eps.
@@ -384,7 +355,7 @@ def plot_eps_dependency(eps_values, iterations):
 def plot_w_dependency(w_values, iterations, baseline_iterations=None):
     """
     Строит график зависимости числа итераций от коэффициента релаксации w.
-    При baseline_iterations можно показать горизонтальную линию для обычного метода.
+    При baseline_iterations можно показать горизонтальную лиeнию для обычного метода
     """
     plt.figure(figsize=(8, 5))
     plt.plot(w_values, iterations, marker='o', label='Ускоренный метод Либмана')
@@ -478,15 +449,12 @@ def main():
     eps_plot_path = plot_eps_dependency(eps_values, eps_iterations)
     print(f"График зависимости от eps сохранен в: {eps_plot_path}")
 
-    # --------------------------------------------------------
     # 5. Ускоренный метод Либмана
-    # --------------------------------------------------------
     eps_relax = 1e-7
     w_values = np.arange(1.0, 1.71, 0.05)
 
     relax_iterations = study_w_dependency(NX, NY, eps_relax, w_values)
 
-    # Для сравнения получим число итераций обычного метода (w=1)
     _, _, _, baseline_iters, _ = libman_until_eps(NX, NY, eps_relax)
 
     print("\nЗависимость числа итераций от коэффициента релаксации w:")
@@ -496,9 +464,7 @@ def main():
     w_plot_path = plot_w_dependency(w_values, relax_iterations, baseline_iters)
     print(f"График зависимости от w сохранен в: {w_plot_path}")
 
-    # --------------------------------------------------------
     # 6. Пример ускоренного метода для одного конкретного w
-    # --------------------------------------------------------
     chosen_w = 1.2
     x_w, y_w, u_w, iter_w, diff_w = libman_relaxation_until_eps(
         NX, NY, eps_relax, chosen_w
