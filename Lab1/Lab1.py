@@ -5,7 +5,7 @@
 
 # Граничные условия:
 #U(0, y) = sin(pi * y)
-#U(1, y) = 0
+#U(1, y) = 1
 #U(x, 0) = 0
 #U(x, 1) = 0
 
@@ -54,7 +54,7 @@ def apply_boundary_conditions(u: np.ndarray, x: np.ndarray, y: np.ndarray):
     # Верхняя граница: y = 1
     u[-1, :] = 0.0
     # Правая граница: x = 1
-    u[:, -1] = 0.0
+    u[:, -1] = 1.0
     # Левая граница: x = 0
     u[:, 0] = np.sin(np.pi * y)
 
@@ -138,20 +138,34 @@ def analytical_solution(x: np.ndarray, y: np.ndarray):
     Аналитическое решение для задачи:
         U_xx + U_yy = 0
         U(0, y) = sin(pi*y)
-        U(1, y) = 0
+        U(1, y) = 1
         U(x, 0) = 0
         U(x, 1) = 0
 
     Решение:
-        U(x, y) = sinh(pi * (1 - x)) / sinh(pi) * sin(pi * y)
+        U(x, y) = U_left(x, y) + U_right(x, y),
+        где U_left соответствует левой границе sin(pi*y),
+        а U_right - правой границе, равной 1.
     """
     result = np.zeros((len(y), len(x)), dtype=float)
+    series_terms = 100
 
     for i in range(len(y)):
+        sin_pi_y = math.sin(math.pi * y[i])
         for j in range(len(x)):
-            result[i, j] = (
+            left_part = (
                 math.sinh(math.pi * (1.0 - x[j])) / math.sinh(math.pi)
-            ) * math.sin(math.pi * y[i])
+            ) * sin_pi_y
+
+            right_part = 0.0
+            for n in range(1, series_terms + 1, 2):
+                right_part += (
+                    (4.0 / (n * math.pi)) *
+                    (math.sinh(n * math.pi * x[j]) / math.sinh(n * math.pi)) *
+                    math.sin(n * math.pi * y[i])
+                )
+
+            result[i, j] = left_part + right_part
 
     return result
 
@@ -404,6 +418,9 @@ def plot_solution_comparison(x, y, u_numeric: np.ndarray):
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_zlabel("U(x, y)")
+    ax.set_xlim(X_MAX, X_MIN)
+    ax.set_ylim(Y_MIN, Y_MAX)
+    ax.set_zlim(0.0, 1.0)
     ax.set_xticks(np.arange(X_MIN, X_MAX + 0.001, 0.1))
     ax.set_yticks(np.arange(Y_MIN, Y_MAX + 0.001, 0.1))
     ax.view_init(elev=28, azim=-135)
