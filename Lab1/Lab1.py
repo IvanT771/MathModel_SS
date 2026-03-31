@@ -20,8 +20,8 @@ SHOW_PLOTS = os.environ.get("LAB1_SHOW_PLOTS", "0") == "1"
 if not SHOW_PLOTS:
     matplotlib.use("Agg")
 
-NX = 4
-NY = 4
+NX = 20
+NY = 20
 
 # Геометрические границы области
 X_MIN = 0.0
@@ -382,6 +382,42 @@ def plot_w_dependency(w_values, iterations, baseline_iterations=None):
         plt.close()
     return output_path
 
+
+def plot_solution_comparison(x, y, u_numeric: np.ndarray):
+    """
+    Строит объемный график численного решения на сетке.
+    """
+    x_grid, y_grid = np.meshgrid(x, y)
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111, projection="3d")
+    surface = ax.plot_surface(
+        x_grid,
+        y_grid,
+        u_numeric,
+        cmap="viridis",
+        edgecolor="black",
+        linewidth=0.4,
+        antialiased=True
+    )
+    fig.colorbar(surface, ax=ax, shrink=0.7, pad=0.12, label="U(x, y)")
+    ax.set_title("решение уравнения Лапласа")
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("U(x, y)")
+    ax.set_xticks(np.arange(X_MIN, X_MAX + 0.001, 0.1))
+    ax.set_yticks(np.arange(Y_MIN, Y_MAX + 0.001, 0.1))
+    ax.view_init(elev=28, azim=-135)
+
+    plt.tight_layout()
+    PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = PLOTS_DIR / "solution_comparison.png"
+    plt.savefig(output_path, dpi=180)
+    if SHOW_PLOTS:
+        plt.show()
+    else:
+        plt.close()
+    return output_path
+
 def main():
     # 1. Решение методом Либмана для заданного числа итераций
     fixed_iterations = 50
@@ -420,6 +456,8 @@ def main():
 
     max_error_fixed = compute_error(u_fixed, u_exact)
     print(f"\nМаксимальная ошибка после {fixed_iterations} итераций: {max_error_fixed:.10f}")
+    solution_plot_path = plot_solution_comparison(x, y, u_fixed)
+    print(f"График решения сохранен в: {solution_plot_path}")
 
 
     #3.Решение до заданной точности eps
