@@ -40,12 +40,12 @@ T1=150, α1=0.1; T2=40, α2=0.1: r = 0.22222, q = 4.00000, u_left(2 c) = 109.322
 5. Чем меньше коэффициент теплоотдачи α, тем сильнее температура на соответствующей границе отходит от температуры внешней среды.
 
 Сохраненные графики:
-C:\MTUCI\Семестр 4\МатМоделированиеСложныхСистем\Lab2\plots\verification_dirichlet.png
-C:\MTUCI\Семестр 4\МатМоделированиеСложныхСистем\Lab2\plots\stability_check.png
-C:\MTUCI\Семестр 4\МатМоделированиеСложныхСистем\Lab2\plots\first_kind_m300.png
-C:\MTUCI\Семестр 4\МатМоделированиеСложныхСистем\Lab2\plots\first_kind_m600.png
-C:\MTUCI\Семестр 4\МатМоделированиеСложныхСистем\Lab2\plots\first_kind_m300_vs_m600.png
-C:\MTUCI\Семестр 4\МатМоделированиеСложныхСистем\Lab2\plots\third_kind_case_1.png
-C:\MTUCI\Семестр 4\МатМоделированиеСложныхСистем\Lab2\plots\third_kind_case_2.png
-C:\MTUCI\Семестр 4\МатМоделированиеСложныхСистем\Lab2\plots\third_kind_case_3.png
-C:\MTUCI\Семестр 4\МатМоделированиеСложныхСистем\Lab2\plots\third_kind_case_4.png
+C:\MTUCI\MMSS\MathModel_SS\Lab2\plots\verification_dirichlet.png
+C:\MTUCI\MMSS\MathModel_SS\Lab2\plots\stability_check.png
+C:\MTUCI\MMSS\MathModel_SS\Lab2\plots\first_kind_m300.png
+C:\MTUCI\MMSS\MathModel_SS\Lab2\plots\first_kind_m600.png
+C:\MTUCI\MMSS\MathModel_SS\Lab2\plots\first_kind_m300_vs_m600.png
+C:\MTUCI\MMSS\MathModel_SS\Lab2\plots\third_kind_case_1.png
+C:\MTUCI\MMSS\MathModel_SS\Lab2\plots\third_kind_case_2.png
+C:\MTUCI\MMSS\MathModel_SS\Lab2\plots\third_kind_case_3.png
+C:\MTUCI\MMSS\MathModel_SS\Lab2\plots\third_kind_case_4.png
